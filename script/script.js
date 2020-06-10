@@ -8,10 +8,15 @@ let blackJackGame = {
 
 const YOU = blackJackGame['you'];
 const Dealer = blackJackGame['dealer'];
-const hitSound =new Audio('./sounds/swish.m4a')
+const hitSound =new Audio('./sounds/swish.m4a');
+const winSound = new Audio('./sounds/cash.mp3');
+const lostSound = new Audio('./sounds/aww.mp3');
 
 //for hit botton
 document.querySelector('#blackjack-hit-button').addEventListener("click", blackJackHit);
+
+//for Stand button
+document.querySelector('#blackjack-stand-button').addEventListener("click", dealerLogic);
 
 //for deal button
 document.querySelector('#blackjack-deal-button').addEventListener("click",blackJackDeal)
@@ -45,10 +50,17 @@ function doShowCard(card ,activePlayer){
 // Function for deal button
 
 function blackJackDeal(){
-    let youImages=document.querySelector('#your-box').querySelectorAll('img');
+
+    let computating=computeWinner();
+    showResult(computating);
+    
    
+    let youImages=document.querySelector('#your-box').querySelectorAll('img');
+
+ 
     let dealerImages=document.querySelector('#dealer-box').querySelectorAll('img');
 
+ 
     for(i=0;i<dealerImages.length;++i){
         dealerImages[i].remove();
     }
@@ -94,4 +106,64 @@ function showScore(activePlayer){
         document.querySelector(activePlayer.scoreSpan).style.color='red';
     }
 
+}
+
+// 2nd player
+
+function dealerLogic(){
+    let card=randomCard();
+    doShowCard(card,Dealer);
+    updateScore(card,Dealer);
+    showScore(Dealer);
+
+}
+
+// Function for computing the winner
+
+function computeWinner(){
+    let winner;
+
+    if(YOU.score<=21){
+        if(YOU.score>Dealer.score || Dealer.score>21 ){
+            winner=YOU;
+        }
+        else if(YOU.score<DealerScore){
+            winner=Dealer;
+        }
+        else if(YOU.score === Dealer.score ){
+            console.log('Draw');
+        }
+    }
+    else if(YOU.score>21 && Dealer.score<=21){
+        winner=Dealer;
+    }
+    else if(YOU.score>=21 && Dealer.score>=21){
+    console.log('Draw');
+    }
+    return winner;
+}
+
+// function for showing result
+
+function showResult(winner){
+
+    let message , messagecolor;
+
+    if(winner===YOU){
+        message='You won';
+        messagecolor='green';
+        winSound.play(); 
+    }
+    else if(winner===Dealer){
+        message='You lost';
+        messagecolor='red';
+        lostSound.play();
+    }
+    else{
+        message = 'You drew!';
+        messagecolor='black';   
+    }
+
+        document.querySelector('#blackjack-result').textContent=message;
+        document.querySelector('#blackjack-result').style.color=messagecolor
 }
