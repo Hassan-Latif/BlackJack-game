@@ -60,6 +60,7 @@ function blackJackDeal(){
     if(blackJackGame.isStand===true && blackJackGame.turnOver===true){
         
     blackJackGame.isStand=false;
+    blackJackGame.turnOver=false;
 
     let youImages=document.querySelector('#your-box').querySelectorAll('img');
 
@@ -85,6 +86,8 @@ function blackJackDeal(){
     document.querySelector('#dealer-blackjack-result').style.color='#ffffff'
     document.querySelector('#blackjack-result').textContent='Lets Play';
     document.querySelector('#blackjack-result').style.color='black';
+
+   
 }
 }
 //Update Function
@@ -116,20 +119,28 @@ function showScore(activePlayer){
 
 }
 
+// Sleep function
+
+function Sleep(ms){
+    return new Promise(resolve => setTimeout(resolve,ms));
+}
+
 // 2nd player
 
-function dealerLogic(){
+async function dealerLogic(){
     blackJackGame.isStand=true;
+    while(Dealer.score<16 && blackJackGame.isStand===true){
     let card=randomCard();
     doShowCard(card,Dealer);
     updateScore(card,Dealer);
     showScore(Dealer);
+    await Sleep(1000);
+}
 
-    if(Dealer.score > 16){
         blackJackGame.turnOver=true;
         let computating=computeWinner();
         showResult(computating);
-    }
+    
   
 }
 
