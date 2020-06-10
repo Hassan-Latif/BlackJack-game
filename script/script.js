@@ -6,7 +6,9 @@ let blackJackGame = {
     'cardsMap' : {'2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'J':10, 'K':10, 'Q':10 , 'A':[1,11]},
     'Wins':0,
     'Loses':0,
-    'Draws':0
+    'Draws':0,
+    'isStand':false,
+    'turnOver': false
 }
 
 const YOU = blackJackGame['you'];
@@ -27,13 +29,14 @@ document.querySelector('#blackjack-deal-button').addEventListener("click",blackJ
 //Function for Hit button
 
 function blackJackHit(){
+    if(blackJackGame.isStand===false){
     let cards=randomCard();
    console.log(cards);   
     doShowCard(cards,YOU);
     updateScore(cards,YOU);
     showScore(YOU);
 }
-
+}
 function randomCard(){
     let randomNo = Math.floor(Math.random()*13);
     return blackJackGame.cards[randomNo];
@@ -53,7 +56,11 @@ function doShowCard(card ,activePlayer){
 // Function for deal button
 
 function blackJackDeal(){
-   
+    
+    if(blackJackGame.isStand===true && blackJackGame.turnOver===true){
+        
+    blackJackGame.isStand=false;
+
     let youImages=document.querySelector('#your-box').querySelectorAll('img');
 
  
@@ -79,7 +86,7 @@ function blackJackDeal(){
     document.querySelector('#blackjack-result').textContent='Lets Play';
     document.querySelector('#blackjack-result').style.color='black';
 }
-
+}
 //Update Function
 
 function updateScore(card,activePlayer){
@@ -112,16 +119,18 @@ function showScore(activePlayer){
 // 2nd player
 
 function dealerLogic(){
+    blackJackGame.isStand=true;
     let card=randomCard();
     doShowCard(card,Dealer);
     updateScore(card,Dealer);
     showScore(Dealer);
 
     if(Dealer.score > 16){
+        blackJackGame.turnOver=true;
         let computating=computeWinner();
         showResult(computating);
     }
-
+  
 }
 
 // Function for computing the winner
@@ -161,7 +170,7 @@ function computeWinner(){
 // function for showing result
 
 function showResult(winner){
-
+if(blackJackGame.turnOver===true){
     let message , messagecolor;
 
     if(winner===YOU){
@@ -184,4 +193,5 @@ function showResult(winner){
 
         document.querySelector('#blackjack-result').textContent=message;
         document.querySelector('#blackjack-result').style.color=messagecolor
+}
 }
